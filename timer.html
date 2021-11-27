@@ -1,0 +1,123 @@
+<html>
+<head>
+<meta chasret="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<script type="text/javascript" src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<style type="text/css">
+*{
+    font-family: Courier, monospace, sans-serif;
+}
+
+.disp_timer{
+    margin: 2rem auto;
+    font-size: 20vw;
+    text-align: center;
+    width: 100%;
+}
+
+.disp_timer_prev{
+    margin: 1rem auto;
+    font-size: 8vw;
+    text-align: center;
+    width: 100%;
+    color: #666;
+}
+
+.button-div{
+    margin: 1rem auto;
+    text-align: center;
+}
+.start_stop_btn,.reset_btn{
+    margin: 1rem auto;
+    width: 90%;
+    height: 3rem;
+    border-radius:2rem;
+    border: #FFF solid 1px;
+    font-size: 1.6rem;
+    color: #FFF;
+}
+
+.start_stop_btn{
+    background-color: rgb(0, 148, 222);
+}
+
+.reset_btn{
+    background-color: rgb(133, 0, 222);
+}
+
+</style>
+
+<script type="text/javascript">
+
+let start = null;
+let counter_msec = null;
+let timer = null;
+let before = null;
+
+function update_timer(){
+    let d = new Date().getTime();
+    time = d - start + counter_msec;
+    disp = parseInt(time / 1000);
+    hour = parseInt(disp / 3600);
+    min = ("0"+parseInt((disp - 3600*hour) / 60)).slice(-2);
+    sec = ("0"+parseInt(disp - 3600*hour - 60*min)).slice(-2);
+    $('.disp_timer').html(min+":"+sec);
+}
+
+function reset(){
+    $('.disp_timer_prev').html($('.disp_timer').html());
+    start = null;
+    counter_msec = null;
+    clearInterval(timer);
+    $('.disp_timer').html('00:00');
+    $('.start_stop_btn').html('START (Enter)');
+    $('.start_stop_btn').css('background-color','rgb(0, 148, 222)');
+}
+
+$(function(){
+
+    reset();
+    $('.disp_timer_prev').html('00:00');
+
+    $('.start_stop_btn').on('click',function(){
+        if(!start){
+            start = new Date().getTime();
+            timer = setInterval(update_timer,100);
+            $('.start_stop_btn').html('STOP (Enter)');
+            $('.start_stop_btn').css('background-color','rgb(222, 148, 0)');
+        }else{
+            clearInterval(timer);
+            counter_msec = new Date().getTime() - start + counter_msec;
+            start = null;
+            timer = null
+            $('.start_stop_btn').html('START (Enter)');
+            $('.start_stop_btn').css('background-color','rgb(0, 148, 222)');
+        }
+    });
+
+    $('.reset_btn').on('click',function(){
+        reset();
+    });
+
+    $(document).on('keyup',function(event){
+        if(event.keyCode == 13){
+            $('.start_stop_btn').click();
+        }else if(event.keyCode == 8 || event.keyCode == 46){
+            $('.reset_btn').click();
+        }
+
+    });
+});
+</script>
+</head>
+<body>
+<div class="disp_timer"></div>
+<div class="disp_timer_prev"></div>
+<div class="button-div">
+    <button class="start_stop_btn">START (Enter)</button>
+</div>
+<div class="button-div">
+    <button class="reset_btn">RESET (delete)</button>
+</div>
+</body>
+</html>
