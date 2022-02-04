@@ -1,6 +1,6 @@
 <html>
 <head>
-<meta chasret="utf-8">
+<meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <script type="text/javascript" src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <style type="text/css">
@@ -15,12 +15,16 @@
     width: 100%;
 }
 
-.disp_timer_prev{
+.disp_timer_prev, .medal{
     margin: 1rem auto;
     font-size: 8vw;
     text-align: center;
     width: 100%;
     color: #666;
+}
+
+.medal{
+    color: #000;
 }
 
 .button-div{
@@ -65,10 +69,10 @@ function update_timer(){
 }
 
 function reset(){
-    $('.disp_timer_prev').html($('.disp_timer').html());
     start = null;
     counter_msec = null;
     clearInterval(timer);
+    $('.medal').html('');
     $('.disp_timer').html('00:00');
     $('.start_stop_btn').html('START (Enter)');
     $('.start_stop_btn').css('background-color','rgb(0, 148, 222)');
@@ -83,15 +87,32 @@ $(function(){
         if(!start){
             start = new Date().getTime();
             timer = setInterval(update_timer,100);
+            $('.medal').html('');
             $('.start_stop_btn').html('STOP (Enter)');
             $('.start_stop_btn').css('background-color','rgb(222, 148, 0)');
+            $('.reset_btn').css('background-color','rgb(192, 192, 192)');
+            $('.reset_btn').prop('disabled',true);
+
         }else{
             clearInterval(timer);
             counter_msec = new Date().getTime() - start + counter_msec;
             start = null;
             timer = null
+            $('.disp_timer_prev').html($('.disp_timer').html());
+            if(counter_msec<61000){
+                $('.disp_timer').html('🏅');
+                $('.medal').html('神メダル すごい!');
+            }else if(counter_msec<121000){
+                $('.disp_timer').html('🥇');
+                $('.medal').html('金メダル おめでとう!');
+            }else if(counter_msec<181000){
+                $('.disp_timer').html('🥈');
+                $('.medal').html('銀メダル おめでとう!');
+            }
             $('.start_stop_btn').html('START (Enter)');
             $('.start_stop_btn').css('background-color','rgb(0, 148, 222)');
+            $('.reset_btn').prop('disabled',false);
+            $('.reset_btn').css('background-color','rgb(133, 0, 222)');
         }
     });
 
@@ -112,6 +133,7 @@ $(function(){
 </head>
 <body>
 <div class="disp_timer"></div>
+<div class="medal"></div>
 <div class="disp_timer_prev"></div>
 <div class="button-div">
     <button class="start_stop_btn">START (Enter)</button>
